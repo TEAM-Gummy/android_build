@@ -493,7 +493,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-        mka bacon
+        mka gummy
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -674,7 +674,7 @@ function eat()
 {
     if [ "$OUT" ] ; then
         MODVERSION=$(get_build_var TG_VERSION)
-        ZIPFILE=TG-$MODVERSION.zip
+        ZIPFILE=Gummy-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
@@ -1851,7 +1851,7 @@ function cmka() {
     if [ ! -z "$1" ]; then
         for i in "$@"; do
             case $i in
-                bacon|otapackage|systemimage)
+                gummy|otapackage|systemimage)
                     mka installclean
                     mka $i
                     ;;
