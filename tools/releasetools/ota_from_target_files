@@ -415,14 +415,42 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if OPTIONS.wipe_user_data:
     script.FormatPartition("/data")
 
+  script.ShowProgress(0.5, 0)
+  script.Print("")
+  script.Print("")
+#  script.Print("    _____ _____  ___  ___  ___ ")
+#  script.Print("   |_   _|  ___|/ _ \ |  \/  | ")
+#  script.Print("     | | | |__ / /_\ \| .  . | ")
+#  script.Print("     | | |  __||  _  || |\/| | ")
+#  script.Print("     | | | |___| | | || |  | | ")
+#  script.Print("     \_/ \____/\_| |_/\_|  |_/ ")
+#  script.Print("")
+  script.Print(" _____ _   ____  ______  ____   __ ")
+  script.Print("|  __ \ | | |  \/  ||  \/  \ \ / / ")
+  script.Print("| |  \/ | | | .  . || .  . |\ V /  ")
+  script.Print("| | __| | | | |\/| || |\/| | \ /   ")
+  script.Print("| |_\ \ |_| | |  | || |  | | | |   ")
+  script.Print(" \____/\___/\_|  |_/\_|  |_/ \_/   ")
+  script.Print("")
+  script.Print("         <<< AOSP 4.3 >>>")
+  script.Print("")
+  script.Print("{x}...Formatting system partition...")
+  script.Print("")
+
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
   script.FormatPartition("/system")
   script.Mount("/system")
-  #script.UnpackPackageDir("recovery", "/system")
+  script.ShowProgress(0.5, 40)
+  script.Print("{x}...Installing System...")
+  script.Print("")
   script.UnpackPackageDir("system", "/system")
 
+  script.Print("{x}...Creating Symlinks...")
+  script.Print("")
+  script.Print("{x}...Setting Permissions...")
+  script.Print("")
   symlinks = CopySystemFiles(input_zip, output_zip)
   script.MakeSymlinks(symlinks)
 
@@ -441,12 +469,18 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   if OPTIONS.backuptool:
     script.ShowProgress(0.2, 10)
+    script.Print("{x}...Restoring Backed Up Files...")
+    script.Print("")
     script.RunBackup("restore")
 
   script.ShowProgress(0.2, 10)
+  script.Print("{x}...Flashing Kernel...")
+  script.Print("")
   script.WriteRawImage("/boot", "boot.img")
 
   script.ShowProgress(0.1, 0)
+  script.Print("{x}...Installation Complete!")
+  script.Print("")
   device_specific.FullOTA_InstallEnd()
 
   if OPTIONS.extra_script is not None:
