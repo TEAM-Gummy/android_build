@@ -453,12 +453,6 @@ function add_lunch_combo()
     LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
 }
 
-# add the default one here
-add_lunch_combo aosp_arm-eng
-add_lunch_combo aosp_x86-eng
-add_lunch_combo aosp_mips-eng
-add_lunch_combo vbox_x86-eng
-
 function print_lunch_menu()
 {
     local uname=$(uname)
@@ -2023,6 +2017,15 @@ if [ "x$SHELL" != "x/bin/bash" ]; then
             ;;
     esac
 fi
+
+# Execute the contents of any vendorsetup.sh files we can find.
+for f in `/bin/ls vendor/Gummy/vendorsetup.sh 2> /dev/null`
+
+do
+    echo "including $f"
+    . $f
+done
+unset f
 
 # Add completions
 check_bash_version && {
