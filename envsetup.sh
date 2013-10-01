@@ -74,7 +74,11 @@ function check_product()
 
     if (echo -n $1 | grep -q -e "^tg_") ; then
        TG_BUILD=$(echo -n $1 | sed -e 's/^tg_//g')
-       export BUILD_NUMBER=$((date +%s%N ; echo $TG_BUILD; hostname) | sha1sum | cut -c1-10)
+       if [ `uname` == "Darwin" ]; then
+           export BUILD_NUMBER=$((date +%s%N ; echo $TG_BUILD; hostname) | openssl sha1 | cut -c1-10)
+       else
+           export BUILD_NUMBER=$((date +%s%N ; echo $TG_BUILD; hostname) | sha1sum | cut -c1-10)
+       fi
     else
        TG_BUILD=
     fi
