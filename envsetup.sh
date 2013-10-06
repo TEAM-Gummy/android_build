@@ -458,7 +458,7 @@ function print_lunch_menu()
     echo
     echo "You're building on" $uname
     if [ "$(uname)" = "Darwin" ] ; then
-       echo "  (ohai, koush!)"
+       echo "  (ohai, koush (and nocoast)!)"
     fi
     echo
     if [ "z${TG_DEVICES_ONLY}" != "z" ]; then
