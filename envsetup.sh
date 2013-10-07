@@ -486,7 +486,7 @@ function brunch()
 {
     breakfast $*
     if [ $? -eq 0 ]; then
-        mka gummy
+        time mka gummy
     else
         echo "No such item in brunch menu. Try 'breakfast'"
         return 1
@@ -533,7 +533,7 @@ function lunch()
         answer=$1
     else
         print_lunch_menu
-        echo -n "Which would you like? [aosp_arm-eng] "
+        echo -n "Which would you like? [aosp_arm-userdebug] "
         read answer
     fi
 
