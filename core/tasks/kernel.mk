@@ -142,6 +142,12 @@ ifeq ($(TARGET_ARCH),arm)
             ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/toolchain/linaro/bin/arm-eabi-"
             include $(BUILD_SYSTEM)/linaro_compilerchecks.mk
         endif
+    else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),arm-eabi-4.4.3)
+        ifeq ($(HOST_OS),darwin)
+            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/darwin-x86/arm/arm-eabi-4.4.3/bin/arm-eabi-"
+        else
+            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.4.3/bin/arm-eabi-"
+        endif
     else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),arm-eabi-4.6)
         ifeq ($(HOST_OS),darwin)
             ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/darwin-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
