@@ -499,7 +499,6 @@ function breakfast()
     target=$1
     TG_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
-    add_lunch_combo full-eng
     for f in `/bin/ls vendor/Gummy/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
