@@ -1473,7 +1473,6 @@ function tgremote()
     fi
     echo You can now push to "tgremote".
 }
-export -f tgremote
 
 function aospremote()
 {
@@ -1490,7 +1489,6 @@ function aospremote()
     git remote add aosp https://android.googlesource.com/$PFX$PROJECT
     echo "Remote 'aosp' created"
 }
-export -f aospremote
 
 function installboot()
 {
