@@ -445,7 +445,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   script.Print("| |_\ \ |_| | |  | || |  | | | |   ")
   script.Print(" \____/\___/\_|  |_/\_|  |_/ \_/   ")
   script.Print("")
-  script.Print("         <<< AOSP 4.3 >>>")
+  script.Print("         <<< AOSP 4.4 >>>")
   script.Print("")
   script.Print("{x}...Formatting system partition...")
   script.Print("")
