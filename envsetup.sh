@@ -2063,9 +2063,7 @@ fi
 
 # Execute the contents of any vendorsetup.sh files we can find.
 for f in `/bin/ls vendor/Gummy/vendorsetup.sh 2> /dev/null`
-
 do
-    echo "including $f"
     . $f
 done
 unset f
