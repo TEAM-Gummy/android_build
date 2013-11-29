@@ -1398,6 +1398,10 @@ else
     OTA_FROM_TARGET_SCRIPT := $(TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT)
 endif
 
+BOOT_ZIP_FROM_IMAGE_SCRIPT := ./build/tools/releasetools/boot_flash_from_image
+KERNEL_PATH := $(TARGET_KERNEL_SOURCE)/arch/arm/configs/$(TARGET_KERNEL_CONFIG)
+#BOOT_ZIP_OUT_FILE := Gummy-Kernel-$(DEVICE).zip
+
 ifneq ($(TG_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
 else
@@ -1420,8 +1424,15 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   --override_device=$(override_device) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-.PHONY: otapackage gummy
+.PHONY: otapackage gummy bootzip
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+bootzip: bootimage
+	$(BOOT_ZIP_FROM_IMAGE_SCRIPT) \
+	   $(recovery_fstab) \
+	   $(OUT) \
+	   $(TARGET_DEVICE) \
+	   $(KERNEL_PATH)
+
 gummy: otapackage
 ifneq ($(TARGET_CUSTOM_RELEASETOOL),)
 	@echo -e ${CL_YLW}"Running custom releasetool..."${CL_RST}
