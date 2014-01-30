@@ -1,4 +1,5 @@
 #!/bin/bash
+. $ANDROID_BUILD_TOP/vendor/Gummy/tools/functions
 
 FSTAB=$1
 OUT=$2
@@ -10,14 +11,14 @@ UPDATER=$OUT/obj/EXECUTABLES/updater_intermediates/updater
 LINENUMBER=`sed -n "/\/boot/ =" $FSTAB | head -1`
 LINE=`sed -n "${LINENUMBER}p" $FSTAB`
 stringarray=(${LINE})
-bootpartition=${stringarray[2]}
-partition_type=${stringarray[1]}
-KERNELVERSION=`sed -n -e "/CONFIG_LOCALVERSION/s/^.*=//p" $4`
-SYSTEMNUMBER=`sed -n '/\/system/ =' $FSTAB`
+bootpartition=${stringarray[0]}
+partition_type=${stringarray[2]}
+KERNELVERSION=`sed -n -e "/CONFIG_LOCALVERSION/s/^.*=//p" $DEFCONFIG | head -1`
+SYSTEMNUMBER=`sed -n "/\/system / =" $FSTAB`
 SYSTEMLINE=`sed -n "${SYSTEMNUMBER}p" $FSTAB`
 systemarray=(${SYSTEMLINE})
-systemtype=${systemarray[1]}
-systemmount=${systemarray[2]}
+systemtype=${systemarray[2]}
+systemmount=${systemarray[0]}
 
 rm -r $OUT/*kernel*
 
@@ -32,7 +33,7 @@ fi
 
 if [ "$KERNELVERSION" != "" ]
 then
-    VERSION=`echo $KERNELVERSION | cut -d '-' -f2 | cut -d '"' -f1`
+    VERSION=`echo -e $KERNELVERSION | cut -d '-' -f2 | sed 's/"//g'`
     KERNEL_VERSION=$VERSION-kernel
 else
     KERNEL_VERSION=Gummy-$DEVICE-kernel-$(date +"%m-%d-%y")
@@ -59,7 +60,7 @@ then
     echo "       write_raw_image("'"/tmp/boot.img"'", "'"'$bootpartition'"'")" >> $UPDATER_DIR/updater-script
     echo '       delete("/tmp/boot.img"));' >> $UPDATER_DIR/updater-script
 fi
-echo "mount("'"'$systemtype'"'", "'"EMMC"'", "'"'$systemmount'"'", "'"system"'");" >> $UPDATER_DIR/updater-script
+echo "mount("'"'$systemtype'"'", "'"EMMC"'", "'"'$systemmount'"'", "'"/system"'");" >> $UPDATER_DIR/updater-script
 echo 'package_extract_dir("system", "/system");' >> $UPDATER_DIR/updater-script
 echo 'unmount("/system");' >> $UPDATER_DIR/updater-script
 echo 'ui_print(" ");' >> $UPDATER_DIR/updater-script
@@ -74,10 +75,17 @@ cp -r $OUT/system/lib/modules/* $ZIP_DIR/system/lib/modules
 cd $ZIP_DIR
 zip -qr ../$KERNEL_VERSION.zip ./
 cd $OUT
+echo ""
+echo -e $CL_RED"Double check that your updater script is correct!!"$CL_RST
+echo ""
+pygmentize -g $UPDATER_DIR/updater-script
 rm -rf $ZIP_DIR
 
 #sign package
 java -jar ${ANDROID_HOST_OUT}/framework/signapk.jar ${SOURCE}/build/target/product/security/testkey.x509.pem ${SOURCE}/build/target/product/security/testkey.pk8 $KERNEL_VERSION.zip $KERNEL_VERSION-signed.zip
 rm ./$KERNEL_VERSION.zip
+echo ""
 md5sum $KERNEL_VERSION-signed.zip
+OUTFILE=$OUT/$KERNEL_VERSION-signed.zip
+echo -e $CL_GRN"Kernel package complete: $OUTFILE"$CL_RST
 cd $SOURCE
