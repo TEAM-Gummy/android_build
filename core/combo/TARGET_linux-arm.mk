@@ -68,35 +68,17 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-TARGET_arm_CFLAGS :=    -O3 \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing \
-                        -funswitch-loops \
-                        -fno-tree-vectorize \
-                        -fno-inline-functions \
-                        -Wstrict-aliasing=3 \
-                        -Werror=strict-aliasing \
-                        -fgcse-after-reload \
-                        -fno-ipa-cp-clone \
-                        -fno-vect-cost-model \
-                        -Wno-error=unused-parameter \
-                        -Wno-error=unused-but-set-variable
+# Target ARM. Usually you don't need to change anything here
+TARGET_arm_CFLAGS := -O3 -DNDEBUG -fstrict-aliasing -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized
 
-# Modules can choose to compile some source as thumb.
-TARGET_thumb_CFLAGS :=  -mthumb \
-                        -Os \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing \
-                        -fno-tree-vectorize \
-                        -fno-inline-functions \
-                        -fno-unswitch-loops \
-                        -Wstrict-aliasing=3 \
-                        -Werror=strict-aliasing \
-                        -fgcse-after-reload \
-                        -fno-ipa-cp-clone \
-                        -fno-vect-cost-model \
-                        -Wno-error=unused-parameter \
-                        -Wno-error=unused-but-set-variable
+# Target THUMB, major portion of Android. Please change -O3 back to -Os in case of issues
+TARGET_thumb_CFLAGS := -mthumb -O3 -DNDEBUG -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -frerun-cse-after-loop -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized
+
+# Release CFLAGS. Usually you don't need to change anything here
+TARGET_RELEASE_CFLAGS := -O3 -DNDEBUG -fno-strict-aliasing -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized
+
+# Release CPPFLAGS. Usually you don't need to change anything here
+TARGET_GLOBAL_CPPFLAGS += -O3 -DNDEBUG -funsafe-loop-optimizations -fsection-anchors -fivopts -ftree-loop-im -ftree-loop-ivcanon -ffunction-sections -fdata-sections -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -Wno-error=unused-parameter -Wno-error=unused-but-set-variable -Wno-error=maybe-uninitialized -Wstrict-aliasing=3
 
 # Turn off strict-aliasing if we're building an AOSP variant without the
 # patchset...
@@ -134,26 +116,14 @@ TARGET_GLOBAL_CFLAGS += \
 			-ffunction-sections \
 			-fdata-sections \
 			-funwind-tables \
-			-fstrict-aliasing \
 			-fstack-protector \
 			-Wa,--noexecstack \
 			-Werror=format-security \
 			-D_FORTIFY_SOURCE=2 \
 			-fno-short-enums \
 			$(arch_variant_cflags) \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable \
 			-include $(android_config_h) \
 			-I $(dir $(android_config_h))
-
-# The "-Wunused-but-set-variable" option often breaks projects that enable
-# "-Wall -Werror" due to a commom idiom "ALOGV(mesg)" where ALOGV is turned
-# into no-op in some builds while mesg is defined earlier. So we explicitly
-# disable "-Wunused-but-set-variable" here.
-ifneq ($(filter 4.6 4.6.% 4.7 4.7.% 4.8 4.8.% 4.9 4.9.%, $(TARGET_GCC_VERSION)),)
-TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fstrict-aliasing -fno-builtin-sin \
-			-fno-strict-volatile-bitfields
-endif
 
 # This is to avoid the dreaded warning compiler message:
 #   note: the mangling of 'va_list' has changed in GCC 4.4
@@ -163,7 +133,7 @@ endif
 # in their exported C++ functions). Also, GCC 4.5 has already
 # removed the warning from the compiler.
 #
-TARGET_GLOBAL_CFLAGS += -Wno-psabi -fstrict-aliasing
+TARGET_GLOBAL_CFLAGS += -Wno-psabi
 
 TARGET_GLOBAL_LDFLAGS += \
 			-Wl,-z,noexecstack \
@@ -174,24 +144,9 @@ TARGET_GLOBAL_LDFLAGS += \
 			-Wl,--icf=safe \
 			$(arch_variant_ldflags)
 
-TARGET_GLOBAL_CFLAGS += -mthumb-interwork -fstrict-aliasing
+TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 
-TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden -fstrict-aliasing
-
-# More flags/options can be added here
-TARGET_RELEASE_CFLAGS += \
-			-DNDEBUG \
-			-g \
-			-Wstrict-aliasing=3 \
-			-Werror=strict-aliasing \
-			-fstrict-aliasing \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers \
-			-fno-ipa-cp-clone \
-			-fno-vect-cost-model \
-			-Wno-error=unused-parameter \
-			-Wno-error=unused-but-set-variable
+TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 libc_root := bionic/libc
 libm_root := bionic/libm
