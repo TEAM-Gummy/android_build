@@ -15,6 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+class outColors:
+    CL_CYN = '\033[36m'
+    CL_RST = '\033[0m'
+
 from sys import argv
 from os import getcwd, environ, remove, path, listdir, makedirs, walk
 from re import search, sub
@@ -141,5 +145,5 @@ testkey_p = "%s/build/target/product/security/testkey.pk8" % source
 call(['java', '-jar', signer, testkey_x, testkey_p, "%s.zip" % zip_dir, "%s-signed.zip" % zip_dir])
 remove("%s.zip" % zip_dir)
 #rmtree(zip_dir)
-print md5(open("%s-signed.zip" % zip_dir, "rb").read()).hexdigest() + " %s-signed.zip" % (kernel_version)
-print "kernel saved to %s-signed.zip" % zip_dir
+print outColors.CL_CYN + md5(open("%s-signed.zip" % zip_dir, "rb").read()).hexdigest() + " %s-signed.zip" % (kernel_version)
+print "kernel saved to %s-signed.zip" % zip_dir + outColors.CL_RST
